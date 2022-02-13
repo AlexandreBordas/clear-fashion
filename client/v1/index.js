@@ -32,8 +32,8 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // I can find on these e-shops
 // 2. Log the variable
 
-
-
+const CHEAPEST_TSHIRT = 'https://www.loom.fr/collections/tous-les-vetements/products/le-t-shirt';
+console.log(CHEAPEST_TSHIRT);
 
 
 /**
@@ -49,11 +49,24 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 1. Create a variable and assign it the number of products
 // 2. Log the variable
 
+const NUMBER_OF_PRODUCTS = marketplace.length;
+console.log(NUMBER_OF_PRODUCTS);
+
 
 // 🎯 TODO: Brands name
 // 1. Create a variable and assign it the list of brands name only
 // 2. Log the variable
 // 3. Log how many brands we have
+
+const BRANDS_LIST = [];
+
+for(let i=0;i<marketplace.length;i++)
+{
+  BRANDS_LIST.push(marketplace[i].brand);
+}
+
+console.log(BRANDS_LIST);
+console.log(new Set(BRANDS_LIST).size);
 
 
 // 🎯 TODO: Sort by price
@@ -61,23 +74,59 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
 
+function ComparePrice(a,b){
+  return a.price - b.price;
+}
+
+let sortByPrice = marketplace.slice();
+
+sortByPrice.sort(ComparePrice);
+
+console.log(sortByPrice);
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
 // 2. Create a variable and assign it the list of products by date from recent to old
 // 3. Log the variable
 
+function CompareDate(a,b){
+  a = new Date(a.Date);
+  b = new Date(b.Date);
+
+  return a - b;
+}
+
+let sortByDate = marketplace.slice();
+
+sortByDate.sort(CompareDate);
+
+console.log(sortByDate);
 
 // 🎯 TODO: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
 
+const priceFiltered = []
+
+for(let i=0;i<sortByPrice.length;i++)
+{
+  if(sortByPrice[i].price >= 50 && sortByPrice[i].price <= 100)
+  {
+    priceFiltered.push(sortByPrice[i]);
+  }
+}
+
+console.log(priceFiltered);
 
 // 🎯 TODO: Average Basket
 // 1. Determine the average basket of the marketplace
 // 2. Log the average
 
+const reducer = function(previousPrice, currentProduct) {
+  return previousPrice + currentProduct.price;
+};
 
+console.log(marketplace.reduce(reducer, 0) / marketplace.length);
 
 
 
