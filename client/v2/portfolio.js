@@ -10,6 +10,7 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const selectBrand = document.querySelector('#brand-select');
 const selectFilter = document.querySelector('#filter-select');
+const selectSort = document.querySelector('#sort-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 
@@ -195,7 +196,7 @@ selectFilter.addEventListener('change', async(event) => {
   else if(event.target.value == "By recently released")
   {
     //Feature 3 : Filter by recently released
-    products.result = products.result.filter(product => CompareDates(product.released) <= 1.2096e9);
+    products.result = products.result.filter(product => CompareRelease(product.released) <= 1.2096e9);
   }
   else if(event.target.value == "By favorite")
   {
@@ -210,10 +211,50 @@ selectFilter.addEventListener('change', async(event) => {
 })
 
 //Feature 3 : Filter by recently released (2 weeks)
-function CompareDates(released)
+function CompareRelease(released)
 {
   let today = new Date();
   released = new Date(released);
   return today - released;
 }
 
+//Sort Products
+selectSort.addEventListener('change', async(event) => {
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
+
+  if(event.target.value == "price-asc")
+  {
+    products.result = products.result.sort(ComparePrices);
+  }
+  else if(event.target.value == "price-desc")
+  {
+    products.result = products.result.sort(ComparePrices).reverse();
+  }
+  else if(event.target.value == "date-asc")
+  {
+    products.result = products.result.sort(CompareDates);
+  }
+  else if(event.target.value == "date-desc")
+  {
+    products.result = products.result.sort(CompareDates).reverse();
+  }
+  else
+  {
+    //Aucun changement effectué, aucun sort sélectionné
+  }
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+})
+
+function ComparePrices(a, b)
+{
+  return a.price - b.price;
+}
+
+function CompareDates(a, b)
+{
+  a = new Date(a.released);
+  b = new Date(b.released);
+
+  return a - b;
+}
