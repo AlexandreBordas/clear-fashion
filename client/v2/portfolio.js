@@ -298,3 +298,5 @@ const PercentileCalculator = async (pagination, p, spanP) =>
   spanP.innerHTML = body.data.result[k].price;
 }
 
+//Feature 11 : Last released date
+
