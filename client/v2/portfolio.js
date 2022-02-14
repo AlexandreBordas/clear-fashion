@@ -21,6 +21,8 @@ const p50NbProducts = document.querySelector('#p50NbProducts');
 const p90NbProducts = document.querySelector('#p90NbProducts');
 const p95NbProducts = document.querySelector('#p95NbProducts');
 
+const renderLatestReleaseDate = document.querySelector('#latestReleasedProduct');
+
 /**
  * Set global value
  * @param {Array} result - products to display
@@ -116,6 +118,8 @@ const render = (products, pagination) => {
   PercentileCalculator(pagination, 50, p50NbProducts);
   PercentileCalculator(pagination, 90, p90NbProducts);
   PercentileCalculator(pagination, 95, p95NbProducts);
+
+  RenderLatestRelease(pagination);
 };
 
 /**
@@ -299,4 +303,11 @@ const PercentileCalculator = async (pagination, p, spanP) =>
 }
 
 //Feature 11 : Last released date
+const RenderLatestRelease = async (pagination) =>
+{
+  const response = await fetch(`https://clear-fashion-api.vercel.app?page=1&size=${pagination.count}`);
 
+  const body = await response.json();
+
+  renderLatestReleaseDate.innerHTML = body.data.result.sort(CompareDates)[body.data.result.length-1].released;
+}
