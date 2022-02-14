@@ -8,11 +8,18 @@ let currentPagination = {};
 // instantiate the selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
+
 const selectBrand = document.querySelector('#brand-select');
 const selectFilter = document.querySelector('#filter-select');
 const selectSort = document.querySelector('#sort-select');
 const sectionProducts = document.querySelector('#products');
+
 const spanNbProducts = document.querySelector('#nbProducts');
+const spanNbNewProducts = document.querySelector('#nbNewProducts');
+
+const p50NbProducts = document.querySelector('#p50NbProducts');
+const p90NbProducts = document.querySelector('#p90NbProducts');
+const p95NbProducts = document.querySelector('#p95NbProducts');
 
 /**
  * Set global value
@@ -101,9 +108,14 @@ const renderIndicators = pagination => {
 
 const render = (products, pagination) => {
   renderProducts(products);
+  RenderNbRecentProducts(pagination);
   renderPagination(pagination);
   renderIndicators(pagination);
   renderBrands(products);
+
+  PercentileCalculator(pagination, 50, p50NbProducts);
+  PercentileCalculator(pagination, 90, p90NbProducts);
+  PercentileCalculator(pagination, 95, p95NbProducts);
 };
 
 /**
@@ -218,7 +230,7 @@ function CompareRelease(released)
   return today - released;
 }
 
-//Sort Products
+//Sort Products (Features 4, 5, 6)
 selectSort.addEventListener('change', async(event) => {
   const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
 
@@ -258,3 +270,31 @@ function CompareDates(a, b)
 
   return a - b;
 }
+
+// Feature 8
+//Deja effectuée par le professeur
+
+//Feature 9 : Number of recent products indicator
+const RenderNbRecentProducts = async (pagination) =>
+{
+  const response = await fetch(`https://clear-fashion-api.vercel.app?page=1&size=${pagination.count}`);
+
+  const body = await response.json();
+
+  spanNbNewProducts.innerHTML = body.data.result.filter(product => CompareRelease(product.released) <= 1.2096e9).length;
+}
+
+//Fonction : calcul des percentiles
+const PercentileCalculator = async (pagination, p, spanP) =>
+{
+  const response = await fetch(`https://clear-fashion-api.vercel.app?page=1&size=${pagination.count}`);
+
+  const body = await response.json();
+
+  body.data.result.sort(ComparePrices);
+
+  let k = Math.floor(p*pagination.count/100);
+
+  spanP.innerHTML = body.data.result[k].price;
+}
+
