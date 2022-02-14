@@ -5,9 +5,11 @@
 let currentProducts = [];
 let currentPagination = {};
 
-// inititiqte selectors
+// instantiate the selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
+const selectBrand = document.querySelector('#brand-select');
+const selectFilter = document.querySelector('#filter-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
 
@@ -100,6 +102,7 @@ const render = (products, pagination) => {
   renderProducts(products);
   renderPagination(pagination);
   renderIndicators(pagination);
+  renderBrands(products);
 };
 
 /**
@@ -111,13 +114,106 @@ const render = (products, pagination) => {
  * @type {[type]}
  */
 selectShow.addEventListener('change', event => {
-  fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
+  fetchProducts(1, parseInt(event.target.value))
     .then(setCurrentProducts)
     .then(() => render(currentProducts, currentPagination));
 });
 
-document.addEventListener('DOMContentLoaded', () =>
-  fetchProducts()
+selectPage.addEventListener('change', event => {
+  fetchProducts(parseInt(event.target.value), selectShow.value)
     .then(setCurrentProducts)
-    .then(() => render(currentProducts, currentPagination))
-);
+    .then(() => render(currentProducts, currentPagination));
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  const products = await fetchProducts();
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
+//Feature 2 : Filter by brands
+selectBrand.addEventListener('click', async(event) => {
+
+  if(event.target.value == "none")
+  {
+    const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+
+  else
+  {
+    const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
+    products.result = products.result.filter(product => product.brand == event.target.value);
+
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+})
+
+const sortBrand = (products, brand) => {
+  const sortedProducts = []
+
+  for(var i = 0; i < products.length; i++)
+  {
+    if(products[i].brand == "brand")
+    {
+      sortedProducts.push(products[i]);
+    }
+  }
+  renderProducts(sortedProducts);
+}
+
+const renderBrands = products =>{
+  const brandsNames = [];
+  console.log(products);
+  products.forEach(product =>{
+    if(!brandsNames.includes(product.brand))
+    {
+      brandsNames.push(product.brand);
+    }
+  })
+  let options = Array.from(brandsNames, brandName => `<option value="${brandName}">${brandName}</option>`);
+  options.unshift("<option value='none'>All</option>");
+  options.unshift("<option disabled value='null'>SELECT A BRAND</option>");
+
+  options = options.join('');
+  selectBrand.innerHTML = options;
+}
+
+//Filter Products
+selectFilter.addEventListener('change', async(event) => {
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize);
+
+  if(event.target.value == "By reasonable price")
+  {
+    //Feature 4 : Filter by reasonable price
+    products.result = products.result.filter(product => product.price <= 50);
+  }
+  else if(event.target.value == "By recently released")
+  {
+    //Feature 3 : Filter by recently released
+    products.result = products.result.filter(product => CompareDates(product.released) <= 1.2096e9);
+  }
+  else if(event.target.value == "By favorite")
+  {
+
+  }
+  else
+  {
+    //Aucun changement effectué, aucun filtre sélectionné
+  }
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+})
+
+//Feature 3 : Filter by recently released (2 weeks)
+function CompareDates(released)
+{
+  let today = new Date();
+  released = new Date(released);
+  return today - released;
+}
+

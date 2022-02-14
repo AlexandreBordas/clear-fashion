@@ -34,6 +34,8 @@ console.log(MY_FAVORITE_BRANDS[0]);
 
 const CHEAPEST_TSHIRT = 'https://www.loom.fr/collections/tous-les-vetements/products/le-t-shirt';
 console.log(CHEAPEST_TSHIRT);
+//LE PUSH A BIEN MARCHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe
+
 
 
 /**
@@ -118,8 +120,8 @@ for(let i=0;i<sortByPrice.length;i++)
 
 console.log(priceFiltered);
 
-// 🎯 TODO: Average Basket
-// 1. Determine the average basket of the marketplace
+// 🎯 TODO: Average price
+// 1. Determine the average price of the marketplace
 // 2. Log the average
 
 const reducer = function(previousPrice, currentProduct) {
