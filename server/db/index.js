@@ -1,10 +1,24 @@
-require('dotenv').config();
 const {MongoClient} = require('mongodb');
 const fs = require('fs');
 
 const MONGODB_DB_NAME = 'clearfashion';
 const MONGODB_COLLECTION = 'products';
-const MONGODB_URI = process.env.MONGODB_URI;
+
+const MONGODB_URI = `mongodb+srv://admin:admin@clearfashion.zyc7q.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+console.log("MONGO", MONGODB_URI);
+
+const products = require('/products_for_dedicated.json')
+
+const insertProducts = async () => {
+  try{
+      await connect();
+      collection = db.collection('products');
+      const result = collection.insertMany(products);
+      console.log(result);
+  }catch(e){
+      console.error(e)
+  }
+}
 
 let client = null;
 let database = null;
@@ -83,3 +97,18 @@ module.exports.close = async () => {
     console.error('🚨 MongoClient.close...', error);
   }
 };
+
+const connect = async () => {
+  try{
+      const client = await MongoClient.connect(MONGODB_URI, {'useNewUrlParser': true});
+      db = client.db(MONGODB_DB_NAME);
+      console.log('Connected')
+
+  }catch(e){
+      console.error(e)
+  }
+}
+
+connect();
+
+insertProducts();
