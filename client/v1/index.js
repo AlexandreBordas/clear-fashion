@@ -60,12 +60,14 @@ console.log(NUMBER_OF_PRODUCTS);
 // 2. Log the variable
 // 3. Log how many brands we have
 
-const BRANDS_LIST = [];
+var BRANDS_LIST = [];
 
 for(let i=0;i<marketplace.length;i++)
 {
   BRANDS_LIST.push(marketplace[i].brand);
 }
+
+BRANDS_LIST = Array.from(new Set(BRANDS_LIST));
 
 console.log(BRANDS_LIST);
 console.log(new Set(BRANDS_LIST).size);
@@ -152,22 +154,54 @@ console.log(marketplace.reduce(reducer, 0) / marketplace.length);
 //   'brand-name-n': [{...}, {...}, ..., {...}],
 // };
 //
+
+var brands = {}
+for (var i = 0; i < marketplace.length; i++)
+{
+  let brand = marketplace[i].brand
+  let product = [...marketplace][i]
+  delete product.brand
+
+  if(brand in brands)
+  {
+    brands[brand].push(product)
+  }
+  else
+  {
+    brands[brand] = [product]
+  }
+}
 // 2. Log the variable
+console.log(brands);
+
 // 3. Log the number of products by brands
+for(var i = 0; i < BRANDS_LIST.length; i++)
+{
+  console.log(`Number of products from ${BRANDS_LIST[i]} : ${brands[BRANDS_LIST[i]].length}`);
+}
 
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
+
+var SORTED_PRICE = marketplace.sort(function(a, b){
+  return a.price - b.price
+});
+
 // 2. Log the sort
 
+console.log(SORTED_PRICE);
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
+
+var SORTED_DATE = marketplace.sort(function(a, b){
+  return new Date(a.Date) - new Date(b.Date)
+});
+
 // 2. Log the sort
 
-
-
-
+console.log(SORTED_DATE);
 
 /**
  * 💶
@@ -180,7 +214,11 @@ console.log(marketplace.reduce(reducer, 0) / marketplace.length);
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
 
+var p90index = parseInt(marketplace.length*0.9)
 
+var p90sorted = marketplace.sort((b, a) => a.price - b.price);
+
+console.log(p90sorted[p90index].price)
 
 
 
@@ -256,20 +294,34 @@ const COTELE_PARIS = [
 // // 1. Log if we have new products only (true or false)
 // // A new product is a product `released` less than 2 weeks.
 
+var newProducts = [...COTELE_PARIS].filter(product => (new Date().getTime() - new Date(product.released).getTime()) / (3600*24*1000) < 14)
+console.log(newProducts.length > 0)
 
 // 🎯 TODO: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
 // // A reasonable price if all the products are less than 100€
 
+var reasonablePrice = [...COTELE_PARIS].filter(product => product.price < 100)
+console.log(reasonablePrice.length > 0)
 
 // 🎯 TODO: Find a specific product
 // 1. Find the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
+
+var uuid_product = [...COTELE_PARIS].filter(product => product.uuid === `b56c6d88-749a-5b4c-b571-e5b5c6483131`)
+
 // 2. Log the product
 
+console.log(uuid_product);
 
 // 🎯 TODO: Delete a specific product
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
+
+let index = [...COTELE_PARIS].findIndex(product => product.uuid === `b56c6d88-749a-5b4c-b571-e5b5c6483131`)
+delete COTELE_PARIS[index];
+
 // 2. Log the new list of product
+
+console.log(COTELE_PARIS)
 
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
@@ -285,7 +337,11 @@ let jacket = blueJacket;
 jacket.favorite = true;
 
 // 1. Log `blueJacket` and `jacket` variables
-// 2. What do you notice?
+
+console.log(blueJacket)
+console.log(jacket)
+
+// 2. What do you notice? => both are true at favorite
 
 blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
@@ -295,9 +351,12 @@ blueJacket = {
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
 
+jacket = {...blueJacket}
 
+jacket.favorite = true;
 
-
+console.log(blueJacket)
+console.log(jacket)
 
 /**
  * 🎬
@@ -307,4 +366,9 @@ blueJacket = {
 
 // 🎯 TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
+
+window.localStorage.setItem("MY_FAVORITE_BRANDS", JSON.stringify(MY_FAVORITE_BRANDS))
+
 // 2. log the localStorage
+
+console.log(window.localStorage);
