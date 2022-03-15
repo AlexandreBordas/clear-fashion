@@ -7,7 +7,7 @@ const MONGODB_COLLECTION = 'products';
 const MONGODB_URI = `mongodb+srv://admin:admin@clearfashion.zyc7q.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 console.log("MONGO", MONGODB_URI);
 
-const products = require('/products_for_dedicated.json')
+const products = require('../products.json')
 
 const insertProducts = async () => {
   try{
